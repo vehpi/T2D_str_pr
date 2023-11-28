@@ -1,10 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Jun 23 06:46:10 2022
-
-@author: vehpi_old
-"""
 '''This module contains functions that take XPP info and dat files as input 
 and generate python scripts or data frame. Generated python script is ready 
 to be run/integrated on python.
