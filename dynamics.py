@@ -387,7 +387,7 @@ def outputs(fn=12,bif_name='bifurcation_data.dat',it1=300,inc_i1s=[0.7,0.75],inc
 	 	ax.tick_params(axis='both', which='major', labelsize=10)
 	fig.show()
 
-def animation(bif_name='bifurcation_data.dat',it1=300,it2=2100,inc_i1=0.75,inc_i2=0.1,t0=0,tend=3600,dec_bound=False):
+def animation(fignum=123,bif_name='bifurcation_data.dat',it1=300,it2=2100,inc_i1=0.75,inc_i2=0.1,t0=0,tend=3600,dec_bound=False):
 	pars['it1']=it1
 	pars['inc_i1']=inc_i1
 	pars['it2']=it2
@@ -399,7 +399,7 @@ def animation(bif_name='bifurcation_data.dat',it1=300,it2=2100,inc_i1=0.75,inc_i
 	gs=GridSpec(ncols=3, nrows=3, wspace=0.5,hspace=0.5, height_ratios=[1,1,1])
 	
 	axs=list(np.zeros(4))
-	fig=plt.figure(1,tight_layout=False)
+	fig=plt.figure(fignum,tight_layout=False)
 	axs[0]=fig.add_subplot(gs[0,0])
 	axs[1]=fig.add_subplot(gs[0,1])
 	axs[2]=fig.add_subplot(gs[0,2])
