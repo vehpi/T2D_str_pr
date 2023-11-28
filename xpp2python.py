@@ -184,7 +184,6 @@ def simul(odefun, tspan, y0, pars, info=None, fign=123, keep_old=False, draw_fig
 			fig=plt.figure(fign)
 			axs=fig.get_axes()
 		else:
-			plt.figure(fign).clear()
 			fig,axs=plt.subplots((len(vn)+1)//2,2)
 			axs=axs.ravel()
 		for i,ax in enumerate(axs):
