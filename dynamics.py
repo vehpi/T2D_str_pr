@@ -1,11 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Mon Nov 21 13:41:39 2022
-
-@author: vehpi_old
-"""
-
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -301,6 +293,7 @@ def outputs(fn=12,bif_name='bifurcation_data.dat',it1=300,inc_i1s=[0.7,0.75],inc
 	from matplotlib.gridspec import GridSpec
 	
 	if fn==12:
+		fignum=12
 		pars['it1']=it1
 		inc_i1s=[0.5,0.75, 0.75]
 		inc_i2s=[0,0,0]
@@ -308,6 +301,7 @@ def outputs(fn=12,bif_name='bifurcation_data.dat',it1=300,inc_i1s=[0.7,0.75],inc
 		labels=['$DE_i$=150% BL','$DE_i$=175% BL','$DE_i$=175% BL -> 100% BL at T=70 months']
 		dec_b=False
 	elif fn==13:
+		fignum=13
 		pars['it1']=it1
 		inc_i1s=[ 0.75, 0.75, 0.75]
 		inc_i2s=[0.2,0.3,0]
@@ -315,6 +309,7 @@ def outputs(fn=12,bif_name='bifurcation_data.dat',it1=300,inc_i1s=[0.7,0.75],inc
 		labels=['$DE_i$=175% BL -> 120% BL at T=70 months','$DE_i$=175% BL -> 130% BL at T=70 months','$DE_i$=175% BL -> 100% BL at T=88 months']
 		dec_b=True
 	elif fn=='custom':
+		fignum=14
 		pars['it1']=it1
 		inc_i1s=inc_i1s
 		inc_i2s=inc_i2s
@@ -329,7 +324,7 @@ def outputs(fn=12,bif_name='bifurcation_data.dat',it1=300,inc_i1s=[0.7,0.75],inc
 	gs=GridSpec(ncols=3, nrows=3, wspace=0.5,hspace=0.5, height_ratios=[1,1,1])
 	
 	axs=list(np.zeros(4))
-	fig=plt.figure(1,tight_layout=False)
+	fig=plt.figure(fignum,tight_layout=False)
 	axs[0]=fig.add_subplot(gs[0,0])
 	axs[1]=fig.add_subplot(gs[0,1])
 	axs[2]=fig.add_subplot(gs[0,2])
