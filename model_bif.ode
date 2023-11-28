@@ -1,0 +1,194 @@
+# This file can be run in XPP/AUTO dynamical system analysis ans simulation toolbox (https://sites.pitt.edu/~phase/bard/bardware/xpp/xpp.html)
+# The model has 8 variables: 
+# The independent variable is time 't' and is in days.
+# g: plasma glucose (mg/dl),
+# i: plasma nsulin (uU/ml),
+# b: beta cell mass (mg), 
+# sigma: beta cell function (uU/mg/day)
+# Si: whole body insulin sensitivity (uU/ml/day),
+# w: body weight (kg),
+# inf: systemic inflammation (dimensionless), 
+# ffa: plasma free fatty acids (umol/l),
+
+# Initial values of the variables
+G(0)=99
+I(0)=9
+b(0)=1000
+Si(0)=0.8
+#w(0)=81
+infl(0)=0
+ffa(0)=400
+sigma(0)=536
+
+## PARAMETER VALUES of glucose-insulin model
+p bmi=25
+p Eg0=24.48
+p k=700
+p BV=5
+
+###### Parameters: Metabolic rate M and Insulin secretion rate ISR
+p Mmax=1
+p alpha_M=140
+p kM=2
+p alpha_ISR=1.2
+p kISR=2
+
+###### Parameters: b, proliferation P(ISR) and Apoptosis A(M)
+p Pmax=4.55
+p kP=4
+p alpha_P=35
+p P_b=0
+
+p Amax=5
+p alpha_A=0.37
+p kA=6
+p A_b=0.9
+p tau_b=1800
+
+# The subject is assumed to be a 30 years old 80 kg body weight and 2m height at steady state
+p height=1.8
+p age_b=30
+w=bmi*height^2
+
+# Age can be introduced as dynamics variable
+p cage=0
+age=age_b+cage*t/365
+
+##### Parameters: Insulin Sensitivity (Si)
+p target_Si=1.4
+p tau_Si=1
+p bmi_h=25
+p mffa=0.8, ksi_infl=1.8, ksi_ffa=400, nsi_ffa=6, nsi_infl=1
+tsi=target_si*(ksi_infl^nsi_infl/(ksi_infl^nsi_infl+infl^nsi_infl))*(1-mffa*ffa^nsi_ffa/(ffa^nsi_ffa+ksi_ffa^nsi_ffa))
+
+# Parameter values for FFA dependent Si is estimated using information from (https://doi.org/10.1172/JCI5001)
+# Parameter values for FFA dependent Si is extracted from Fig 5A of (https://doi.org/10.2337/diabetes.54.6.1640)
+
+###### Parameters: weight gain
+intake_i=2500
+# Daily energy intake at steady state (kcals)
+p inc_i1=0
+p inc_i2=0
+p inc_i3=0
+p it1=0
+p it2=inf
+p it3=inf
+# 'it1' is the time point where the increase intake becomes effective.
+# 'it2' is the time point where the second change in intake (such as diet) becomes effective.
+# 'it3' is the time point where the third change in intake (weight regain) becomes effective.
+# Ratio of increase in daily intake
+inc_int = 0 + heav(t-it1)*heav(it2-t)*heav(it3-t)*inc_i1 + heav(t-it2)*heav(it3-t)*inc_i2 + heav(t-it3)*inc_i3
+w_base=81
+
+p kpc=11550
+
+expd=2500/(kpc*w_base)
+p tau_w=1.5
+k_w=1/kpc
+# kcal/kg weight (kg weight gain per consumed energy in kcals)
+
+# PARAMETERS FOR INFLAMMATORY PATHWAYS
+p k_infl=40
+p n_infl=6
+p infl_b=0
+p tau_infl=1
+
+# FFA model parameters and auxiliaries
+# ffa model was adapted from Roy et al 2006, (https://doi.org/10.1089/dia.2006.8.617)
+# Also see Periwal et al 2008 (https://doi.org/10.1152/ajpregu.90426.2008)
+
+# Auxiliary functions of M, ISR, P_ISR, A_M
+M=Mmax*G^kM/(alpha_M^kM + G^kM)
+ISR = sigma*(M)^kISR/(alpha_ISR^kISR + (M)^kISR)
+
+P_ISR=P_b + Pmax*ISR^kP/(alpha_P^kP + ISR^kP)
+A_M=A_b + Amax*M^kA/(alpha_A^kA + M^kA)
+
+# Beta-cell Proliferation rate P(ISR) and Apoptosis A(M)
+P = P_ISR
+A = A_M
+
+fmass_p=1.2*bmi + 0.23*age - 16.2
+fmass=w*fmass_p/100
+# fat mass formula was taken from Deurenberg et al. 2007 (DOI: https://doi.org/10.1079/BJN19910073)
+
+# Modeling life style change as increased daily energy intake
+inc=1+inc_int
+# inc is a heavy side function that gives increase in daily energy intake at time it, which is set to inf.
+
+# HGP equations and parameters are taken from Ha and Sherman 2020 (https://doi.org/10.1152/ajpendo.00512.2019)
+p HGP_bas=2000, hepa_max=3000, hepa_sic=1, a_hgp=4
+
+#Effect of glucagon on HGP can be introduced by changing the value of k_gcg
+p gcg=0.1, k_gcg=0
+hepa_si=hepa_sic*si
+HGP=(HGP_bas + hepa_max*(a_hgp+k_gcg*gcg)/((a_hgp+k_gcg*gcg)+hepa_si*i))
+
+intake=intake_i*inc
+
+p s=0.0002
+# s is the pairewise intercation/competition rate between beta-cells
+p png=350
+# png is the rate of beta-cell proliferation by differentiation of other islet cells or duct cells.
+# png is constant and assumed to be 350/1800 mg/day 
+
+######  Sigma dynamics
+p sigma_b=536, sgmu=1.5, sgmd=1, sfm=1.2 
+p sim=0.25
+p sgku=81, sgkd=137, sfk=357
+p sik=0.6
+p nsgku=6, nsgkd=6, nsfk=6
+p nsik=4
+
+s_glucu=sgmu*G^nsgku/(G^nsgku+sgku^nsgku)
+s_glucd=sgmd*G^nsgkd/(G^nsgkd+sgkd^nsgkd)
+s_ffa=sfm*ffa^nsfk/(ffa^nsfk+sfk^nsfk)
+s_infl=sim*infl^nsik/(infl^nsik+sik^nsik)
+
+s_inf=sigma_b*(s_glucu - s_glucd*s_ffa - s_infl)
+
+par tau_sigma=1
+p sci=1
+p gclamp=0, iclamp=0
+p maxinfl=1
+
+### Plasma FFA Model
+# parameter values l0 and l2 are taken from Mittendorfer et al. 2009 (10.1038/oby.2009.224)
+# by extractiong information from Fig. 1A
+# Published plasma FFA baseline value is used to calcuate cf
+# l0 and l2 were converted from umol/mın to umol/day/lt to cl0 and cl2
+
+p l0=170, l2=8.1, cf=2
+p ksif=11, aa=2
+p sif=1
+
+siff=si*sif
+# sif is calculated from the parameter values published in (https://doi.org/10.1089/dia.2006.8.617) as sif=pf3/pf2*24*60
+
+cl0=l0*24*60/BV
+cl2=l2*24*60/BV
+al0=2.45*24*60
+
+p ffa_ramax=1.106
+
+G' = gclamp + HGP - (Eg0 + sci*Si*I)*G
+I' = iclamp + b*ISR/BV - k*I
+
+ffa'=(cl0 + cl2*fmass)*(ffa_ramax*(ksif^aa)/(ksif^aa+(siff*i)^aa)) - cf*w*ffa
+Si' = (tsi-Si)/tau_Si
+
+b' = (Png + P*b - A*b - s*b**2)/tau_b
+sigma'=(s_inf - sigma)/tau_sigma
+
+infl' = infl_b + (maxinfl*bmi^n_infl/(bmi^n_infl+k_infl^n_infl)-infl)/tau_infl 
+#w' = (k_w*intake - expd*w)/tau_w
+
+# Other numeric parameters and Auxiliary functions for simulations and graphing
+aux tmonth=t/30
+
+@ meth=cvode, toler=1.0e-10, atoler=1.0e-10, dt=0.5, total=3600
+@ maxstor=2000000,bounds=100000000000
+@ xp=tmonth, yp=G, xlo=0, xhi=120, ylo=0, yhi=200
+@ bell=0
+
+done

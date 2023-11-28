@@ -1,0 +1,106 @@
+File: model.ode 
+
+ Equations... 
+dG/dT=GCLAMP+HGP-(EG0+SCI*SI*I)*G
+dI/dT=ICLAMP+B*ISR/BV-K*I
+dFFA/dT=(CL0+CL2*FMASS)*(FFA_RAMAX*(KSIF^AA)/(KSIF^AA+(SIFF*I)^AA))-CF*W*FFA
+dSI/dT=(TSI-SI)/TAU_SI
+dB/dT=(PNG+P*B-A*B-S*B**2)/TAU_B
+dSIGMA/dT=(S_INF-SIGMA)/TAU_SIGMA
+dINFL/dT=INFL_B+(MAXINFL*BMI^N_INFL/(BMI^N_INFL+K_INFL^N_INFL)-INFL)/TAU_INFL
+dW/dT=(K_W*INTAKE-EXPD*W)/TAU_W
+TMONTH=T/30
+
+where ...
+BMI = W/HEIGHT^2   
+AGE = AGE_B+CAGE*T/365   
+TSI = TARGET_SI*(KSI_INFL^NSI_INFL/(KSI_INFL^NSI_INFL+INFL^NSI_INFL))*(1-MFFA*FFA^NSI_FFA/(FFA^NSI_FFA+KSI_FFA^NSI_FFA))   
+INTAKE_I = 2500   
+INC_INT =  0 + HEAV(T-IT1)*HEAV(IT2-T)*HEAV(IT3-T)*INC_I1 + HEAV(T-IT2)*HEAV(IT3-T)*INC_I2 + HEAV(T-IT3)*INC_I3   
+W_BASE = 81   
+EXPD = 2500/(KPC*W_BASE)   
+K_W = 1/KPC   
+M = MMAX*G^KM/(ALPHA_M^KM + G^KM)   
+ISR =  SIGMA*(M)^KISR/(ALPHA_ISR^KISR + (M)^KISR)   
+P_ISR = P_B + PMAX*ISR^KP/(ALPHA_P^KP + ISR^KP)   
+A_M = A_B + AMAX*M^KA/(ALPHA_A^KA + M^KA)   
+P =  P_ISR   
+A =  A_M   
+FMASS_P = 1.2*BMI + 0.23*AGE - 16.2   
+FMASS = W*FMASS_P/100   
+INC = 1+INC_INT   
+HEPA_SI = HEPA_SIC*SI   
+HGP = (HGP_BAS + HEPA_MAX*(A_HGP+K_GCG*GCG)/((A_HGP+K_GCG*GCG)+HEPA_SI*I))   
+INTAKE = INTAKE_I*INC   
+S_GLUCU = SGMU*G^NSGKU/(G^NSGKU+SGKU^NSGKU)   
+S_GLUCD = SGMD*G^NSGKD/(G^NSGKD+SGKD^NSGKD)   
+S_FFA = SFM*FFA^NSFK/(FFA^NSFK+SFK^NSFK)   
+S_INFL = SIM*INFL^NSIK/(INFL^NSIK+SIK^NSIK)   
+S_INF = SIGMA_B*(S_GLUCU - S_GLUCD*S_FFA - S_INFL)   
+SIFF = SI*SIF   
+CL0 = L0*24*60/BV   
+CL2 = L2*24*60/BV   
+AL0 = 2.45*24*60   
+
+
+ Numerical parameters ...
+NJMP=1  NMESH=40 METHOD=CVode EVEC_ITER=100 
+BVP_EPS=1e-05,BVP_TOL=1e-05,BVP_MAXIT=20 
+DT=0.5 T0=0 TRANS=0 TEND=3600 BOUND=1e+11 DELAY=0 MaxPts=4000
+EVEC_ERR=0.001, NEWT_ERR=0.001 HMIN=1e-12 HMAX=1 TOLER=1e-10 
+POIMAP=0 POIVAR=G POIPLN=0 POISGN=1 
+
+
+ Delay strings ...
+99  
+9  
+400  
+0.8  
+1000  
+536  
+0  
+81  
+
+
+ BCs ...
+0=0
+0=0
+0=0
+0=0
+0=0
+0=0
+0=0
+0=0
+
+
+ ICs ...
+G=94.09178530471618
+I=9.628547250780244
+FFA=403.9775032190754
+SI=0.7984301477929362
+B=1009.263483377821
+SIGMA=530.0333466588366
+INFL=0.05625177755617077
+W=81
+
+
+ Parameters ...
+Eg0=24.48   k=700   BV=5   Mmax=1   
+alpha_M=140   kM=2   alpha_ISR=1.2   kISR=2   
+Pmax=4.55   kP=4   alpha_P=35   P_b=0   
+Amax=5   alpha_A=0.37   kA=6   A_b=0.9   
+tau_b=1800   height=1.8   age_b=30   cage=0   
+target_Si=1.4   tau_Si=1   bmi_h=25   mffa=0.8   
+ksi_infl=1.8   ksi_ffa=400   nsi_ffa=6   nsi_infl=1   
+inc_i1=0   inc_i2=0   inc_i3=0   it1=0   
+it2=inf   it3=inf   kpc=11550   tau_w=1   
+k_infl=40   n_infl=6   infl_b=0   tau_infl=1   
+HGP_bas=2000   hepa_max=3000   hepa_sic=1   a_hgp=4   
+gcg=0.1   k_gcg=0   s=0.0002   png=350   
+sigma_b=536   sgmu=1.5   sgmd=1   sfm=1.2   
+sim=0.25   sgku=81   sgkd=137   sfk=357   
+sik=0.6   nsgku=6   nsgkd=6   nsfk=6   
+nsik=4   tau_sigma=1   sci=1   gclamp=0   
+iclamp=0   maxinfl=1   l0=170   l2=8.1   
+cf=2   ksif=11   aa=2   sif=1   
+ffa_ramax=1.106   
