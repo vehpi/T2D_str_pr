@@ -25,6 +25,8 @@ def main():
 	outputs(fn=12)
 	
 	outputs(fn=13)
+	return ani, ani2
 
 if __name__=='__main__':
-	main()
+	ani,ani2=main()
+	plt.show()

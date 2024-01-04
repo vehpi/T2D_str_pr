@@ -20,6 +20,7 @@ def read_info(fname):
 	pars=[]
 	ics=[]
 	num_pars=[]
+	functions=[]
 	
 	for i in range(len(lines)):
 		if lines[i]=='equations...':
@@ -43,6 +44,11 @@ def read_info(fname):
 			j=i+1
 			while lines[j]!='':
 				num.append(lines[j])
+				j=j+1
+		if lines[i]=='user-defined functions:':
+			j=i+1
+			while lines[j]!='':
+				functions.append(lines[j])
 				j=j+1
 		if lines[i]=='ics ...':
 			j=i+1
@@ -68,7 +74,7 @@ def read_info(fname):
 	dyn_vars=var[0:len(ics)]
 	aux_vars=var[len(ics):]
 	dy=['d'+i for i in dyn_vars]
-	info={'var':var,'eq':eq,'num':num,'pars':pars,'ics':ics,'num_pars':num_pars,'dyn_vars':dyn_vars,'aux_vars':aux_vars,'dy':dy,'tspan':tspan}
+	info={'var':var,'eq':eq,'num':num,'functions':functions,'pars':pars,'ics':ics,'num_pars':num_pars,'dyn_vars':dyn_vars,'aux_vars':aux_vars,'dy':dy,'tspan':tspan}
 	return info
 
 def create_script(fname,outname=False):
@@ -85,6 +91,7 @@ def create_script(fname,outname=False):
 	aux_vars=infod['aux_vars']
 	dy=infod['dy']
 	tspan=infod['tspan']
+	functions=infod['functions']
 	
 	fnames=fname.split('.',2)
 	if outname:
@@ -100,6 +107,7 @@ def create_script(fname,outname=False):
 	py_f.write('from scipy.integrate import solve_ivp as sivp'+2*'\n')
 	py_f.write('inf=np.inf'+2*'\n')
 	
+	py_f.write('\n'+'#Parameters \n')
 	py_f.write('pars={} \n')
 	for pv in pars:
 		pn=pv.split('=',2)[0]
@@ -114,8 +122,14 @@ def create_script(fname,outname=False):
 	py_f.write('\n')
 	py_f.write('\n'+'def odde(t,y,pars_npa): \n')
 	
-	py_f.write('\n'+'\t'+'heav=lambda x: np.heaviside(x,1) \n')
-	
+	py_f.write('\n'+'#Functions \n')
+	py_f.write('\t'+'heav=lambda x: np.heaviside(x,1) \n')
+	for ftx in functions:
+		ftx=ftx.split('=')
+		ftx[0]=ftx[0].split('(')
+		ftx[0][1]=ftx[0][1].replace(')','')
+		py_f.write('\t'+ftx[0][0]+ '=lambda ' + ftx[0][1] + ':' + ftx[1] + '\n')	
+ 
 	py_f.write('\n #Initial Values \n')
 	for i,j in enumerate(dyn_vars):
 		py_f.write('\t'+j+'='+'y[{i}]'.format(i=i)+'\n')
