@@ -102,7 +102,7 @@ def bif_fig(bif_name,pars,fig=None,ax=None,dec_bound=False,ms=100):
 	ax.set_xlabel(r'BMI ($kg/m^2$)',size='medium')
 	ax.set_xlim([25,50])
 	ax.set_ylim([0,2000])
-	plt.show()
+	fig.show()
 	
 	'''
 	Following part is only relevant for creating a color map on the phase space 
@@ -286,7 +286,8 @@ def bif_fig(bif_name,pars,fig=None,ax=None,dec_bound=False,ms=100):
 		cbar.ax.set_yticklabels(tlbls,size='medium')
 		cbar.ax.set_ylabel('Max. DE$_i$ for remission (% BL)',labelpad=5.5)
 		cbar.ax.invert_yaxis()
-		plt.show()
+		fig.show()
+	fig.show()
 
 
 def outputs(fn=12,bif_name='bifurcation_data.dat',it1=300,inc_i1s=[0.7,0.75],inc_i2s=[0.5,0.2],it2s=[70*30,80*30],dec_b=False,labels=None):
@@ -371,6 +372,7 @@ def outputs(fn=12,bif_name='bifurcation_data.dat',it1=300,inc_i1s=[0.7,0.75],inc
 	hspace=0.2,
 	wspace=0.2)
 	fig.set_size_inches([7.8,8.4])
+	fig.show()
 	
 	import matplotlib.transforms as mtransforms
 	import string
@@ -378,8 +380,8 @@ def outputs(fn=12,bif_name='bifurcation_data.dat',it1=300,inc_i1s=[0.7,0.75],inc
 	trans = mtransforms.ScaledTranslation(-20/72, 7/72, fig.dpi_scale_trans)
 	
 	for i,ax in enumerate(axs):
-	 	ax.text(-0.1, 1.05, letters[i] , transform=ax.transAxes ,fontsize='medium', weight='bold',va='bottom', fontfamily='arial')
-	 	ax.tick_params(axis='both', which='major', labelsize=10)
+		ax.text(-0.1, 1.05, letters[i] , transform=ax.transAxes ,fontsize='medium', weight='bold',va='bottom', fontfamily='arial')
+		ax.tick_params(axis='both', which='major', labelsize=10)
 	fig.show()
 
 def animation(fignum=123,bif_name='bifurcation_data.dat',it1=300,it2=2100,inc_i1=0.75,inc_i2=0.1,t0=0,tend=3600,dec_bound=False):
@@ -431,7 +433,7 @@ def animation(fignum=123,bif_name='bifurcation_data.dat',it1=300,it2=2100,inc_i1
 	hspace=0.2,
 	wspace=0.2)
 	fig.set_size_inches([7.8,7.4])
-	
+	fig.show()
 	
 	import matplotlib.transforms as mtransforms
 	import string
@@ -513,5 +515,4 @@ def animation(fignum=123,bif_name='bifurcation_data.dat',it1=300,it2=2100,inc_i1
 						blit=True,
 						save_count=100)
 	fig.show()
-	
 	return ani

@@ -185,6 +185,7 @@ w' = (k_w*intake - expd*w)/tau_w
 # Other numeric parameters and Auxiliary functions for simulations and graphing
 aux tmonth=t/30
 
+# Internal XPP options
 @ meth=cvode, toler=1.0e-10, atoler=1.0e-10, dt=0.5, total=3600
 @ maxstor=2000000,bounds=100000000000
 @ xp=tmonth, yp=G, xlo=0, xhi=120, ylo=0, yhi=200

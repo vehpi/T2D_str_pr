@@ -107,13 +107,7 @@ def create_script(fname,outname=False):
 	py_f.write('from scipy.integrate import solve_ivp as sivp'+2*'\n')
 	py_f.write('inf=np.inf'+2*'\n')
 	
-	py_f.write('\n'+'#Functions \n')
-	for ftx in functions:
-		ftx=ftx.split('=')
-		ftx[0]=ftx[0].split('(')
-		ftx[0][1]=ftx[0][1].replace(')','')
-		py_f.write('\t' + ftx[0][0]+ '=lambda ' + ftx[0][1] + ':' + ftx[1] + '\n')
- 
+	py_f.write('\n'+'#Parameters \n')
 	py_f.write('pars={} \n')
 	for pv in pars:
 		pn=pv.split('=',2)[0]
@@ -128,8 +122,14 @@ def create_script(fname,outname=False):
 	py_f.write('\n')
 	py_f.write('\n'+'def odde(t,y,pars_npa): \n')
 	
-	py_f.write('\n'+'\t'+'heav=lambda x: np.heaviside(x,1) \n')
-	
+	py_f.write('\n'+'#Functions \n')
+	py_f.write('\t'+'heav=lambda x: np.heaviside(x,1) \n')
+	for ftx in functions:
+		ftx=ftx.split('=')
+		ftx[0]=ftx[0].split('(')
+		ftx[0][1]=ftx[0][1].replace(')','')
+		py_f.write('\t'+ftx[0][0]+ '=lambda ' + ftx[0][1] + ':' + ftx[1] + '\n')	
+ 
 	py_f.write('\n #Initial Values \n')
 	for i,j in enumerate(dyn_vars):
 		py_f.write('\t'+j+'='+'y[{i}]'.format(i=i)+'\n')
