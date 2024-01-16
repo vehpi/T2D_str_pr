@@ -190,6 +190,8 @@ def simul(odefun, tspan, y0, pars, info=None, fign=123, keep_old=False, draw_fig
 		if keep_old:
 			fig=plt.figure(fign)
 			axs=fig.get_axes()
+			fig.set_size_inches([7.1, 7])
+			fig.show()
 		else:
 			fig,axs=plt.subplots((len(vn)+1)//2,2)
 			axs=axs.ravel()
@@ -206,5 +208,5 @@ def simul(odefun, tspan, y0, pars, info=None, fign=123, keep_old=False, draw_fig
 						 right=0.955,
 						 hspace=0.55,
 						 wspace=0.27)
-		fig.show()
+		plt.show(block=False)
 	return sol
